@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentSpec: Your AI Agent Prompt Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Bungee+Inline&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .game-title {
+            font-family: 'Bungee Inline', cursive;
+            color: #4a4a4a;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 20px;
+            position: relative;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #5eead4, #60a5fa);
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-in-out;
+        }
+        .step-card {
+            display: none;
+            background-color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .step-card.active {
+            display: block;
+            border-color: #60a5fa;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .option-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .option-card.selected {
+            border-color: #60a5fa;
+            background-color: #eff6ff;
+        }
+        .option-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #60a5fa;
+        }
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e0f2fe;
+            color: #0ea5e9;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 700;
+        }
+        .advanced-options {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Main Container -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="game-title text-5xl md:text-7xl font-bold mb-2">AgentSpec</h1>
+            <p class="text-gray-500 text-lg">Your Personal AI Agent Prompt Generator</p>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 0%;"></div>
+            </div>
+            <div id="progress-labels" class="flex justify-between text-sm text-gray-500 mt-2">
+                <span>Step 1: Type</span>
+                <span>Step 2: Core</span>
+                <span>Step 3: Personality</span>
+                <span>Step 4: Skills</span>
+                <span>Step 5: Identity</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Agent or Team -->
+        <section id="step-1" class="step-card active">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">What are we designing today?</h2>
+                <p class="text-gray-600">Choose between a single agent or a team of collaborating agents.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="option-card" onclick="selectOption(this, 'type', 'agent')">
+                    <div class="icon"><i class="fas fa-user"></i></div>
+                    <h3 class="font-bold text-lg mb-1">A Single Agent</h3>
+                    <p class="text-sm text-gray-600">A versatile AI agent for a variety of tasks.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'type', 'team')">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h3 class="font-bold text-lg mb-1">A Team of Agents</h3>
+                    <p class="text-sm text-gray-600">A specialized group of AIs that work together.</p>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="nextStep()">
+                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 2: Team Configuration -->
+        <section id="step-2" class="step-card">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">How will your team collaborate?</h2>
+                <p class="text-gray-600">Choose a collaboration model for your team of agents.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="option-card" onclick="selectOption(this, 'team_collaboration', 'assembly_line')">
+                    <div class="icon"><i class="fas fa-industry"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Assembly Line</h3>
+                    <p class="text-sm text-gray-600">Agents work in sequence, each performing a specific task.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'team_collaboration', 'brainstorming_session')">
+                    <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Brainstorming Session</h3>
+                    <p class="text-sm text-gray-600">Agents work in parallel, sharing ideas and insights.</p>
+                </div>
+            </div>
+            <div class="flex justify-between mt-8">
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="previousStep()">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="nextStep()">
+                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 3: Choose Your Agent Base -->
+        <section id="step-3" class="step-card">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Let's start with the basics!</h2>
+                <p class="text-gray-600">What is your new friend's main purpose?</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="option-card" onclick="selectOption(this, 'base', 'Knowledge Navigator')">
+                    <div class="icon"><i class="fas fa-book-open"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Knowledge Navigator</h3>
+                    <p class="text-sm text-gray-600">A brilliant mind for research, learning, and exploring new topics.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'base', 'Productivity Pal')">
+                    <div class="icon"><i class="fas fa-tasks"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Productivity Pal</h3>
+                    <p class="text-sm text-gray-600">An organized helper to manage tasks, schedules, and goals.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'base', 'Creative Muse')">
+                    <div class="icon"><i class="fas fa-paint-brush"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Creative Muse</h3>
+                    <p class="text-sm text-gray-600">An inspiring partner for brainstorming, writing, and art.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'base', 'Conversation AI agent')">
+                    <div class="icon"><i class="fas fa-comments"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Conversation AI agent</h3>
+                    <p class="text-sm text-gray-600">A friendly chatterbox for fun, support, and daily chats.</p>
+                </div>
+            </div>
+            <div class="flex justify-between mt-8">
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="previousStep()">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="nextStep()">
+                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 4: Personality -->
+        <section id="step-4" class="step-card">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">What's your agent's vibe?</h2>
+                <p class="text-gray-600">Choose the personality traits that best fit your new AI agent.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="option-card" onclick="selectOption(this, 'personality', 'Friendly & Bubbly')">
+                    <div class="icon"><i class="fas fa-smile-beam"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Friendly & Bubbly</h3>
+                    <p class="text-sm text-gray-600">Always cheerful and ready for a chat.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'personality', 'Calm & Collected')">
+                    <div class="icon"><i class="fas fa-coffee"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Calm & Collected</h3>
+                    <p class="text-sm text-gray-600">A soothing presence to help you relax.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'personality', 'Witty & Sarcastic')">
+                    <div class="icon"><i class="fas fa-robot"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Witty & Sarcastic</h3>
+                    <p class="text-sm text-gray-600">A sharp mind with a dry sense of humor.</p>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'personality', 'Direct & To-the-point')">
+                    <div class="icon"><i class="fas fa-bullseye"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Direct & To-the-point</h3>
+                    <p class="text-sm text-gray-600">No fluff, just the facts.</p>
+                </div>
+            </div>
+            <div class="flex justify-between mt-8">
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="previousStep()">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="nextStep()">
+                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 5: Skills -->
+        <section id="step-5" class="step-card">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Power up your agent!</h2>
+                <p class="text-gray-600">Choose up to 3 skills for your new friend.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="option-card" onclick="selectOption(this, 'skills', 'Code Generation', 3)">
+                    <div class="icon"><i class="fas fa-code"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Code Generation</h3>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'skills', 'Data Analysis', 3)">
+                    <div class="icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Data Analysis</h3>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'skills', 'Creative Writing', 3)">
+                    <div class="icon"><i class="fas fa-feather-alt"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Creative Writing</h3>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'skills', 'Language Translation', 3)">
+                    <div class="icon"><i class="fas fa-language"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Language Translation</h3>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'skills', 'Summarization', 3)">
+                    <div class="icon"><i class="fas fa-align-left"></i></div>
+                    <h3 class="font-bold text-lg mb-1">Summarization</h3>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'skills', 'General Knowledge', 3)">
+                    <div class="icon"><i class="fas fa-globe"></i></div>
+                    <h3 class="font-bold text-lg mb-1">General Knowledge</h3>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button class="text-blue-500 font-bold" onclick="toggleAdvancedOptions()">Advanced Options</button>
+            </div>
+            <div class="advanced-options mt-4">
+                <label class="block text-lg font-bold text-gray-800 mb-3">Libraries & APIs</label>
+                <input type="text" id="libraries" placeholder="e.g., pandas, numpy, stripe" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-lg focus:border-blue-500 focus:outline-none">
+            </div>
+            <div class="flex justify-between mt-8">
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="previousStep()">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="nextStep()">
+                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 6: Identity -->
+        <section id="step-6" class="step-card">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Last step! Give your agent a name.</h2>
+                <p class="text-gray-600">What should we call your new friend?</p>
+            </div>
+
+            <div class="max-w-md mx-auto">
+                <input type="text" id="agent-name" placeholder="Enter a name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-lg focus:border-blue-500 focus:outline-none text-center">
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="previousStep()">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <button class="bg-green-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-600 transition-all shadow-lg" onclick="finish()">
+                    Finish <i class="fas fa-check ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Final Summary -->
+        <section id="step-7" class="step-card text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Your Agent Specification is Ready!</h2>
+            <p class="text-gray-600 mb-8">Copy the prompt below and paste it into your favorite AI to generate your agent.</p>
+
+            <div id="summary-container" class="bg-gray-100 p-8 rounded-2xl text-left">
+                <pre id="prompt-output" class="whitespace-pre-wrap"></pre>
+            </div>
+
+            <div class="mt-8">
+                <button class="bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition-all shadow-lg" onclick="copyPrompt()">
+                    <i class="fas fa-copy mr-2"></i> Copy Prompt
+                </button>
+                <button class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-400 transition-all shadow-lg" onclick="restart()">
+                    <i class="fas fa-redo-alt mr-2"></i> Create Another Agent
+                </button>
+            </div>
+        </section>
+
+        <!-- Achievements -->
+        <section class="mt-8 text-center">
+            <h3 class="text-xl font-bold text-gray-700 mb-4">Your Achievements</h3>
+            <div id="achievements" class="flex justify-center flex-wrap gap-4">
+                <div class="achievement-badge opacity-50" data-achievement="First Step!">
+                    <i class="fas fa-star mr-2"></i> First Step!
+                </div>
+                <div class="achievement-badge opacity-50" data-achievement="Personality Pro">
+                    <i class="fas fa-brain mr-2"></i> Personality Pro
+                </div>
+                <div class="achievement-badge opacity-50" data-achievement="Skill Master">
+                    <i class="fas fa-bolt mr-2"></i> Skill Master
+                </div>
+                <div class="achievement-badge opacity-50" data-achievement="Identity Creator">
+                    <i class="fas fa-id-card mr-2"></i> Identity Creator
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="prompt-generator.js"></script>
+    <script>
+        let currentStep = 1;
+        const agent = {
+            type: null,
+            team_collaboration: null,
+            base: null,
+            personality: null,
+            skills: [],
+            name: null,
+            libraries: null
+        };
+
+        function selectOption(element, category, value, maxSelections = 1) {
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.option-card');
+            
+            if (maxSelections === 1) {
+                options.forEach(opt => opt.classList.remove('selected'));
+                element.classList.add('selected');
+                agent[category] = value;
+            } else {
+                if (element.classList.contains('selected')) {
+                    element.classList.remove('selected');
+                    agent[category] = agent[category].filter(item => item !== value);
+                } else {
+                    if (agent[category].length < maxSelections) {
+                        element.classList.add('selected');
+                        agent[category].push(value);
+                    } else {
+                        alert(`You can only select up to ${maxSelections} skills.`);
+                    }
+                }
+            }
+
+            // Sound effect placeholder
+            // const audio = new Audio('sound-effect.mp3');
+            // audio.play();
+        }
+
+        function nextStep() {
+            if (!validateStep()) return;
+
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            let nextStepNumber = currentStep + 1;
+
+            if (agent.type === 'agent' && currentStep === 1) {
+                nextStepNumber = 3; // Skip team configuration for single agent
+            }
+
+            const nextStepElement = document.getElementById(`step-${nextStepNumber}`);
+            
+            if (currentStepElement) {
+                currentStepElement.classList.remove('active');
+            }
+
+            if (nextStepElement) {
+                nextStepElement.classList.add('active');
+                currentStep = nextStepNumber;
+            }
+
+            updateProgressBar();
+            updateAchievements();
+        }
+
+        function previousStep() {
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            let previousStepNumber = currentStep - 1;
+
+            if (agent.type === 'agent' && currentStep === 3) {
+                previousStepNumber = 1; // Skip back to agent/team selection
+            }
+
+            const previousStepElement = document.getElementById(`step-${previousStepNumber}`);
+
+            if (currentStepElement) {
+                currentStepElement.classList.remove('active');
+            }
+
+            if (previousStepElement) {
+                previousStepElement.classList.add('active');
+                currentStep = previousStepNumber;
+            }
+
+            updateProgressBar();
+        }
+
+        function validateStep() {
+            if (currentStep === 1 && !agent.type) {
+                alert("Please choose if you want to build a single agent or a team.");
+                return false;
+            }
+            if (currentStep === 2 && agent.type === 'team' && !agent.team_collaboration) {
+                alert("Please choose a collaboration model for your team.");
+                return false;
+            }
+            if (currentStep === 3 && !agent.base) {
+                alert("Please choose a base for your agent.");
+                return false;
+            }
+            if (currentStep === 4 && !agent.personality) {
+                alert("Please choose a personality for your agent.");
+                return false;
+            }
+            if (currentStep === 5 && agent.skills.length === 0) {
+                alert("Please choose at least one skill for your agent.");
+                return false;
+            }
+            return true;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.querySelector('.progress-bar');
+            const totalSteps = agent.type === 'team' ? 6 : 5;
+            const progress = (currentStep - 1) / (totalSteps -1) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function updateAchievements() {
+            const achievements = document.getElementById('achievements');
+            if (currentStep > 1) {
+                achievements.querySelector('[data-achievement="First Step!"]').classList.remove('opacity-50');
+            }
+            if (currentStep > 3) {
+                achievements.querySelector('[data-achievement="Personality Pro"]').classList.remove('opacity-50');
+            }
+            if (currentStep > 4) {
+                achievements.querySelector('[data-achievement="Skill Master"]').classList.remove('opacity-50');
+            }
+        }
+
+        function finish() {
+            agent.name = document.getElementById('agent-name').value;
+            if (!agent.name) {
+                alert("Please give your agent a name.");
+                return;
+            }
+
+            agent.libraries = document.getElementById('libraries').value;
+
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            const nextStepElement = document.getElementById(`step-${currentStep + 1}`);
+            
+            if (currentStepElement) {
+                currentStepElement.classList.remove('active');
+            }
+
+            if (nextStepElement) {
+                nextStepElement.classList.add('active');
+                currentStep++;
+            }
+
+            const promptGenerator = new PromptGenerator(agent);
+            const prompt = promptGenerator.generate();
+            document.getElementById('prompt-output').textContent = prompt;
+
+            const achievements = document.getElementById('achievements');
+            achievements.querySelector('[data-achievement="Identity Creator"]').classList.remove('opacity-50');
+
+            updateProgressBar();
+        }
+
+        function copyPrompt() {
+            const promptOutput = document.getElementById('prompt-output');
+            navigator.clipboard.writeText(promptOutput.textContent);
+            alert('Prompt copied to clipboard!');
+        }
+
+        function restart() {
+            location.reload();
+        }
+
+        function toggleAdvancedOptions() {
+            const advancedOptions = document.querySelector('.advanced-options');
+            advancedOptions.style.display = advancedOptions.style.display === 'none' ? 'block' : 'none';
+        }
+
+    </script>
+
+</body>
+</html>
